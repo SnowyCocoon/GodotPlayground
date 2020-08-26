@@ -2,8 +2,6 @@
 
 [ext_resource path="res://FPS_Player/Character.gd" type="Script" id=1]
 
-
-
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.5
 height = 1.5
