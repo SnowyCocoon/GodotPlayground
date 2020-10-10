@@ -1,11 +1,8 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Bullet_D.png" type="Texture" id=1]
-[ext_resource path="res://Scripts/EnemyScript/Bullet2.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/EnemyScript/Enemy2/Bullet2.gd" type="Script" id=2]
 [ext_resource path="res://Bullet_D_Emmision_Map.png" type="Texture" id=3]
-
-
-
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -27,6 +24,7 @@ void fragment()
 		COLOR = current_color; // we arent over an emission pixel leave alone
 	}
 }"
+custom_defines = ""
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = SubResource( 1 )
