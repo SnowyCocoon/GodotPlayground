@@ -1,0 +1,158 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Road.material" type="Material" id=1]
+[ext_resource path="res://Camera.gd" type="Script" id=2]
+[ext_resource path="res://Car_project.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ground.material" type="Material" id=4]
+[ext_resource path="res://Sky.png" type="Texture" id=5]
+
+[sub_resource type="Curve3D" id=1]
+_data = {
+"points": PoolVector3Array( 0, 0, 0, 0, 0, 0, -10.7418, 0.0710411, -2.43871, 7.32462, 0, 4.86268, -7.32462, 0, -4.86268, -16.9154, 0.506607, -32.3463, -31.1041, 2.23729, -12.1024, 31.1041, -2.23729, 12.1024, 2.37429, -0.601345, -81.1536, -3.23067, 0.209063, -5.98824, 3.23067, -0.209063, 5.98824, 12.4004, 0.988647, -24.5901, -1.87215, 0, -8.11265, 1.87215, 0, 8.11265, 21.5286, 0, -11.8831, 3.24506, 0, -1.37291, -3.24506, 0, 1.37291, 19.2075, 0.706665, 5.94336, 5.1172, 0, -4.24354, -5.1172, 0, 4.24354, 7.17549, 0, 10.333, 2.62101, 0, -5.11721, -2.62101, 0, 5.11721, 13.1767, 0, 26.7111, 3.10314, 0, -1.60507, -3.10314, 0, 1.60507, -1.37596, 0, 32.4893, 2.37138, 0, -0.748859, -2.37138, 0, 0.748859, -16.9986, 0.797363, 29.8142, 5.24202, 0, 1.49772, -5.24202, 0, -1.49772, -35.5105, 0, 32.2753, -7.15095, -1.50207, 17.8225, 7.15095, 1.50207, -17.8225, -63.6289, -1.32526, 23.2816, -4.31513, 1.34607, 13.5544, 4.31513, -1.34607, -13.5544, -70.7359, 0.134284, -11.1502, -14.4213, 3.25018, -9.6118, 14.4213, -3.25018, 9.6118, -45.6947, 0.732832, -27.0821, -12.3648, 0.48596, -5.49813, 12.3648, -0.48596, 5.49813, -27.5231, 0.613958, 5.12731, 0, 0, 0, 0, 0, 0, -13.0389, -0.0701055, 2.74477, 0, 0, 0, 0, 0, 0, -11.2764, -0.012331, -0.917124, 0, 0, 0, 0, 0, 0, -11.2502, 0.000488281, -1.00324 ),
+"tilts": PoolRealArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 )
+}
+
+[sub_resource type="Shader" id=2]
+code = "shader_type spatial;
+
+uniform vec4 out_color : hint_color = vec4(0.0,0.2,1.0,1.0);
+uniform float amount : hint_range(0.2,1.5) = 0.8;
+uniform float beer_factor = 0.2;
+
+float generateOffset(float x, float z, float val1, float val2, float time){
+	float speed = 1.0;
+	
+	float radiansX = ((mod(x+z*x*val1, amount) / amount) + (time * speed) * mod(x * 0.8 + z, 1.5)) * 2.0 * 3.14;
+	float radiansZ = ((mod(val2 * (z*x + x*z), amount) / amount) + (time * speed) * 2.0 *  mod(x, 2.0)) * 2.0 * 3.14;
+	
+	return amount * 0.5 + (sin(radiansZ) + cos(radiansX));
+}
+
+
+vec3 applyDiscortion(vec3 vertex, float time){
+	float xd = generateOffset(vertex.x, vertex.z, 0.2, 0.1, time);
+	float yd = generateOffset(vertex.x, vertex.z, 0.1, 0.3, time);
+	float zd = generateOffset(vertex.x, vertex.z, 0.15, 0.2, time);
+	return vertex + vec3(xd,yd, zd);
+}
+
+void vertex(){
+	VERTEX = applyDiscortion(VERTEX, TIME * 0.1);
+}
+
+void fragment(){
+	NORMAL = normalize(cross(dFdx(VERTEX), dFdy(VERTEX)));
+	METALLIC = 0.6;
+	SPECULAR = 0.5;
+	ROUGHNESS = 0.2;
+	
+	ALBEDO = out_color.xyz;
+	
+	float depth = texture(DEPTH_TEXTURE, SCREEN_UV).r;
+	depth = depth * 2.0 - 1.0;
+	depth = PROJECTION_MATRIX[3][2] / (depth + PROJECTION_MATRIX[2][2]);
+	depth = depth + VERTEX.z;
+	
+	depth = exp(-depth * beer_factor);
+	ALPHA = clamp(1.0 - depth, 0.0, 1.0);
+}"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/out_color = Color( 0, 0.694118, 1, 1 )
+shader_param/amount = 0.2
+shader_param/beer_factor = 0.2
+
+[sub_resource type="PlaneMesh" id=4]
+material = SubResource( 3 )
+size = Vector2( 500, 500 )
+subdivide_width = 50
+subdivide_depth = 50
+
+[sub_resource type="PanoramaSky" id=5]
+panorama = ExtResource( 5 )
+
+[sub_resource type="Environment" id=6]
+background_mode = 2
+background_sky = SubResource( 5 )
+background_color = Color( 0.835294, 1, 1, 1 )
+fog_color = Color( 0, 0, 0, 1 )
+dof_blur_far_distance = 20.0
+dof_blur_far_quality = 2
+glow_enabled = true
+glow_strength = 0.76
+glow_blend_mode = 1
+glow_hdr_luminance_cap = 256.0
+
+[node name="Main" type="Spatial"]
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 0.847094, -0.531443, -1.58382e-08, 0.355329, 0.566377, 0.743612, -0.395187, -0.629909, 0.668612, 0, 11.4785, 0 )
+
+[node name="Car" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8681, 6.83257, 0 )
+
+[node name="Car_project" parent="Car" instance=ExtResource( 3 )]
+transform = Transform( 0.983, 0, 0, 0, 1, 0, 0, 0, 1, -8.18321, -5.44167, -14.8605 )
+continuous_cd = true
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.936225, -0.351401, 0, 0.351401, 0.936225, 0, 7.24797, 12.2293 )
+script = ExtResource( 2 )
+follow_this_path = NodePath("../Car/Car_project")
+
+[node name="Track" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.974288, 0 )
+
+[node name="Path" type="Path" parent="Track"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.125154, -0.0644379, -0.686279 )
+curve = SubResource( 1 )
+
+[node name="Road" type="CSGPolygon" parent="Track/Path"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.804871, -2.89135, 0.757871 )
+invert_faces = true
+polygon = PoolVector2Array( -4, 0, -4, 0.1, 4, 0.1, 4, 0 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 1.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = true
+material = ExtResource( 1 )
+
+[node name="CollisionShape" type="CSGPolygon" parent="Track/Path"]
+visible = false
+use_collision = true
+invert_faces = true
+polygon = PoolVector2Array( -4, 0.1, 4, 0.1, 4, 2, 8, 2, 8, -1, -8, -1, -8, 2, -4, 2 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 1.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = true
+
+[node name="Ground" type="CSGPolygon" parent="Track/Path"]
+invert_faces = true
+polygon = PoolVector2Array( -6, -0.1, 6, -0.1, 12, -4, 12.1, -4.1, 12.1, -4.1, -12, -4 )
+mode = 2
+path_node = NodePath("..")
+path_interval = 1.0
+path_rotation = 2
+path_local = false
+path_continuous_u = false
+path_joined = true
+material = ExtResource( 4 )
+
+[node name="Water" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.23166, 0 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Water"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.11159, 0 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 6 )

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Enemy.tscn" type="PackedScene" id=1]
+
+[node name="Rat" instance=ExtResource( 1 )]
+damage = 4
+
+[node name="HP_Lable" parent="." index="1"]
+text = "25hp"
+
+[node name="HoverInfo" parent="." index="3"]
+margin_top = -14.0
+description = "A mean rat!"

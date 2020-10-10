@@ -1,0 +1,81 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://PlaneTu150.tscn" type="PackedScene" id=1]
+[ext_resource path="res://PlaneController.gd" type="Script" id=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 1, 0.537255, 0, 1 )
+
+[sub_resource type="CubeMesh" id=2]
+material = SubResource( 1 )
+size = Vector3( 1, 16.751, 1 )
+
+[sub_resource type="CubeMesh" id=3]
+size = Vector3( 100, 0.1, 100 )
+
+[node name="Main" type="Node"]
+
+[node name="World" type="Spatial" parent="."]
+
+[node name="Scene" type="Spatial" parent="World"]
+
+[node name="MeshInstance" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.90728, 0, 0 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance2" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 5.90728, 0, 10.0549 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance3" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -37.2074, 0, -4.73056 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance4" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -12.8089, 0, -21.9942 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance5" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 21.0295, 0, -21.9942 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance6" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 21.0295, 0, 1.30978 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance7" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -4.32405, 8.69907, 1.30978 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance8" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12.1945, 8.69907, -22.4519 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance9" type="MeshInstance" parent="World/Scene"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 12.1945, 8.69907, 5.13927 )
+mesh = SubResource( 2 )
+material/0 = null
+
+[node name="MeshInstance10" type="MeshInstance" parent="World/Scene"]
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="PlaneController" type="Camera" parent="World"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.0666, 46.5555 )
+script = ExtResource( 2 )
+speed = 20.0
+yaw_speed = 40.0
+max_yaw = 40.0
+max_roll = 90.0
+pitch_speed = 40.0
+
+[node name="PlaneTu150" parent="World/PlaneController" instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.077, -3.028 )
