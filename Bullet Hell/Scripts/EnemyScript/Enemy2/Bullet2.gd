@@ -5,6 +5,4 @@ func _init():
 
 func _process(delta):
 	self.position += direction * delta * bullet_speed
-	if($RayCast2D.is_colliding()):
-		print("Hit!")
-		queue_free()
+	_bullet_Colliding()
