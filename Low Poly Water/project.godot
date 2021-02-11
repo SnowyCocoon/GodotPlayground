@@ -16,6 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Low Poly Water"
+run/main_scene="res://Water.tscn"
 config/icon="res://icon.png"
 
 [rendering]
